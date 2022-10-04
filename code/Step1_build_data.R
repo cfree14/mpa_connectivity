@@ -21,7 +21,11 @@ data_orig <- readRDS(file=file.path(datadir, "CDWF_2000_2020_cpfv_logbook_data.R
 ################################################################################
 
 # Build data
-data <- data_orig %>% 
+# Exclude trips in which the following were targeted: striped bass, sturgeon, tuna, misc. offshor
+data <- data_orig %>%
+  # Filter
+  mutate(target_species=tolower(target_species)) %>%
+  filter(!grepl("striped bass|sturgeon|tuna|misc. offshore", target_species) & target_species!="na") %>% 
   # Calculate angler hours
   mutate(angler_hours=n_fishers * hrs_fished) %>% 
   # Summarize
